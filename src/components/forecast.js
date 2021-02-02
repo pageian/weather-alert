@@ -28,4 +28,4 @@ const Forecast = ({ forecast }) => {
     )
 };
 
-export default Forecast
+export default Forecast;
