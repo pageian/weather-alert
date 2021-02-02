@@ -7,7 +7,9 @@ class SurfForecast extends Component {
         super();
         this.state = {
             surf_forecast: [],
-            wind_forecast: []
+            wind_forecast: [],
+            tides_forecast: [],
+            spotId: ''
         }
     }
 
@@ -37,14 +39,7 @@ class SurfForecast extends Component {
     addWindScore() {
 
         for(var i = 0; i < this.state.wind_forecast.data.wind.length; i++) {
-            console.log(this.state.surf_forecast.data.wave[i].surf.optimalScore)
-            
-            
-            console.log(this.state.surf_forecast.data.wave[i].surf.optimalScore, " + ", this.state.wind_forecast.data.wind[i].optimalScore,
-            " = ", this.state.surf_forecast.data.wave[i].surf.optimalScore + this.state.wind_forecast.data.wind[i].optimalScore)
-                
             this.state.surf_forecast.data.wave[i].surf.optimalScore += this.state.wind_forecast.data.wind[i].optimalScore;
-    
         }
     }
 
@@ -93,6 +88,15 @@ class SurfForecast extends Component {
         .then(res => res.json())
         .then((data) => {
             this.setState({ wind_forecast: data })
+            console.log(data)
+        })
+        .catch(console.log)
+
+        // tides query
+        fetch('https://services.surfline.com/kbyg/spots/forecasts/tides?spotId=58bdfa7882d034001252e3d8&intervalHours=24')
+        .then(res => res.json())
+        .then((data) => {
+            this.setState({ tides_forecast: data })
             console.log(data)
         })
         .catch(console.log)
