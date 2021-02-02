@@ -6,7 +6,8 @@ class SurfForecast extends Component {
     constructor() {
         super();
         this.state = {
-            forecast: []
+            surf_forecast: [],
+            wind_forecast: []
         }
     }
 
@@ -32,41 +33,66 @@ class SurfForecast extends Component {
         return swells[maxi].period
     }
 
+    // adds windscore to surf forecast for full score
+    addWindScore() {
+
+        for(var i = 0; i < this.state.wind_forecast.data.wind.length; i++) {
+            console.log(this.state.surf_forecast.data.wave[i].surf.optimalScore)
+            
+            
+            console.log(this.state.surf_forecast.data.wave[i].surf.optimalScore, " + ", this.state.wind_forecast.data.wind[i].optimalScore,
+            " = ", this.state.surf_forecast.data.wave[i].surf.optimalScore + this.state.wind_forecast.data.wind[i].optimalScore)
+                
+            this.state.surf_forecast.data.wave[i].surf.optimalScore += this.state.wind_forecast.data.wind[i].optimalScore;
+    
+        }
+    }
+
     render () {
 
-        if (!this.state.forecast || !this.state.forecast.data || !this.state.forecast.data.wave) {
+        if (!this.state.surf_forecast || !this.state.surf_forecast.data
+            || !this.state.surf_forecast.data.wave || !this.state.wind_forecast
+            || !this.state.wind_forecast.data || !this.state.wind_forecast.data.wind) {
             return <span>Loading...</span>;
-        }
-
-        var periods = []
-
-
-        return (
-            <div>
-                <center><div>Surf Forcast</div></center>
-                {this.state.forecast.data.wave.map((f) => (
-                    <div key={f.timestamp} class="card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">{ moment(new Date(f.timestamp * 1000)).format('ddd, MMM D') }</h6>
-                            <h5 class="card-title">{f.surf.min}-{f.surf.max}m @ {this.maxPeriod(f.swells)}s</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{f.surf.optimalScore}*</h6>
-                            {/* <p class="card-text">
-                                max: {w.temp.max} C <br/>
-                                min: {w.temp.min} C</p> */}
+        
+        } else {
+            this.addWindScore()
+            return (
+                <div>
+                    <center><div>Surf Forcast</div></center>
+                    {this.state.surf_forecast.data.wave.map((f) => (
+                        <div key={f.timestamp} class="card">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">{ moment(new Date(f.timestamp * 1000)).format('ddd, MMM D') }</h6>
+                                <h5 class="card-title">{f.surf.min}-{f.surf.max}m @ {this.maxPeriod(f.swells)}s</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{f.surf.optimalScore}*</h6>
+                                {/* <p class="card-text">
+                                    max: {w.temp.max} C <br/>
+                                    min: {w.temp.min} C</p> */}
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
-        );
+                    ))}
+                </div>
+            );
+        }
     }
 
     componentDidMount() {
         // lawrencetown forecast
-        fetch('https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=584204204e65fad6a77094cf&intervalHours=24')
+        fetch('https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=58bdfa7882d034001252e3d8&intervalHours=24')
+        .then(res => res.json())
+        .then((surf_data) => {
+
+            this.setState({ surf_forecast: surf_data })
+            console.log(surf_data)
+        })
+        .catch(console.log)
+
+        // wind query
+        fetch('https://services.surfline.com/kbyg/spots/forecasts/wind?spotId=58bdfa7882d034001252e3d8&intervalHours=24')
         .then(res => res.json())
         .then((data) => {
-            this.setState(
-                { forecast: data })
+            this.setState({ wind_forecast: data })
             console.log(data)
         })
         .catch(console.log)
