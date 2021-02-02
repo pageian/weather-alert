@@ -100,6 +100,10 @@ class SurfForecast extends Component {
             console.log(data)
         })
         .catch(console.log)
+
+        fetch("http://localhost:3001/testAPI")
+        .then(res => res.text())
+        .then(res => console.log("TEST",res));
     } 
 };
 
