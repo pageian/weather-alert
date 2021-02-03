@@ -6,8 +6,20 @@ class Signup extends Component {
     constructor() {
         super();
         this.state = {
-            
+            name: "",
+            email: "",
+            conf_email: "",
+            password: "",
+            conf_password: ""
         }
+    }
+
+    updateField(event) {
+        if(event.target.name == 'name') this.setState({name: event.target.value});
+        else if(event.target.name == 'email') this.setState({email: event.target.value});
+        else if(event.target.name == 'conf_email') this.setState({conf_email: event.target.value});
+        else if(event.target.name == 'password') this.setState({password: event.target.value});
+        else if(event.target.name == 'conf_password') this.setState({conf_password: event.target.value});
     }
 
     render () {
@@ -26,19 +38,19 @@ class Signup extends Component {
                     <div id="form-content">
                         <form>
                             <div class="form-group">
-                                <input type="username" class="form-control" placeholder="Name" />
+                                <input type="username" name="name" value={this.state.name} onChange={this.updateField.bind(this)} class="form-control" placeholder="Name" />
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-control" placeholder="Email address" />
+                                <input type="email" name="email" value={this.state.email} onChange={this.updateField.bind(this)} class="form-control" placeholder="Email address" />
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-control" placeholder="Confirm Email address" />
+                                <input type="email" name="conf_email" value={this.state.conf_email} onChange={this.updateField.bind(this)} class="form-control" placeholder="Confirm Email address" />
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Password" />
+                                <input type="password" name="password" value={this.state.password} onChange={this.updateField.bind(this)} class="form-control" placeholder="Password" />
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Confirm Password" />
+                                <input type="password" name="conf_password" value={this.state.conf_password} onChange={this.updateField.bind(this)} class="form-control" placeholder="Confirm Password" />
                             </div>
                             <button type="button" 
                                     class="btn btn-primary"

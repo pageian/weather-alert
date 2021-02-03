@@ -12,11 +12,8 @@ class Login extends Component {
     }
 
     updateField(event) {
-        if(event.target.name == 'email') {
-            this.setState({email: event.target.value})
-        } else if(event.target.name == 'password') {
-            this.setState({password: event.target.value})
-        }
+        if(event.target.name == 'email') this.setState({email: event.target.value});
+        else if(event.target.name == 'password') this.setState({password: event.target.value});
     }
 
     login() {
