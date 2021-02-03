@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-
-import App from '../App';
+import { Link } from 'react-router-dom';
 
 class Login extends Component {
 
@@ -12,7 +11,7 @@ class Login extends Component {
         }
     }
 
-    handleChange(event) {
+    updateField(event) {
         if(event.target.name == 'email') {
             this.setState({email: event.target.value})
         } else if(event.target.name == 'password') {
@@ -20,7 +19,7 @@ class Login extends Component {
         }
     }
 
-    handleSubmit() {
+    login() {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -51,19 +50,19 @@ class Login extends Component {
                         <div id="form-content">
                             <form>
                                 <div class="form-group">
-                                    <input type="email" name="email" value={this.state.email} onChange={this.handleChange.bind(this)} class="form-control" placeholder="Email address"/>
+                                    <input type="email" name="email" value={this.state.email} onChange={this.updateField.bind(this)} class="form-control" placeholder="Email address"/>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" name="password" value={this.state.password} onChange={this.handleChange.bind(this)} class="form-control" placeholder="Password"/>
+                                    <input type="password" name="password" value={this.state.password} onChange={this.updateField.bind(this)} class="form-control" placeholder="Password"/>
                                 </div>
                                 <button
                                     type="button"
                                     class="btn btn-primary"
-                                    onClick={() => this.handleSubmit()}
+                                    onClick={() => this.login()}
                                     >Log In</button>
                             </form>
                             <hr class="separator"/>
-                            {/* <a routerLink="/signup" id="detail-btn" class="btn btn-primary">Create New Account</a> */}
+                            <Link to="/signup">Create New Account</Link>
                         </div>
                     </div>
                 </div>
