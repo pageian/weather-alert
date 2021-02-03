@@ -3,14 +3,24 @@ var moment = require('moment');
 
 const Forecast = ({ forecast }) => {
     
-    if (!forecast || !forecast[0].weather) {
+    if (!forecast.current || !forecast.daily || !forecast.daily[0].weather) {
         return <span>Loading...</span>;
       }
     
     return (
     <div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{forecast.timezone}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{forecast.current.weather[0].main}</h6>
+                <p class="card-text">
+                temp: {forecast.current.temp} C <br/>
+                feels like: {forecast.current.feels_like} C
+                </p>
+            </div>
+        </div>
         <center><h1>Weather</h1></center>
-        {forecast.map((w) => (
+        {forecast.daily.map((w) => (
             
             <div key={w.dt} class="card">
                 <div class="card-body">
