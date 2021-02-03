@@ -1,6 +1,21 @@
 var express = require('express');
 var router = express.Router();
 var nodemailer = require('nodemailer');
+var firebase = require('firebase');
+
+firebaseConfig = {
+    apiKey: "AIzaSyBO0CU3zMrooSatIMswabol6ZFWi2X5ev8",
+    authDomain: "surf-alert-b0142.firebaseapp.com",
+    projectId: "surf-alert-b0142",
+    storageBucket: "surf-alert-b0142.appspot.com",
+    messagingSenderId: "842072331646",
+    appId: "1:842072331646:web:7bf6068e6717f16056cf2f",
+    measurementId: "G-M9TKCX42Z4"
+  }
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
 router.get('/', function(req, res, next) {
     res.send('API is working properly');
@@ -27,6 +42,25 @@ router.get('/', function(req, res, next) {
     //         console.log('Email sent: ' + info.response);
     //     }
     // });
+});
+
+router.post('/login', function(req, res) {
+    if(req.email != "" || req.password != "") {
+        console.log(req.body.email, req.body.password)
+        firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).then((user_auth) => {
+          console.log(user_auth.user.uid);
+          res.send({
+                uid: user_auth.user.uid,
+                msg: ""
+            });
+        }).catch((err) => {
+            console.log(err);
+            res.send({
+                uid: "",
+                msg: err
+            });
+        });
+      }
 });
 
 module.exports = router;

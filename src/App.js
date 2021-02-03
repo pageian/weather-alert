@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Home from './components/home';
 import SurfForecast from './components/surf-forecast';
+import Login from './components/login';
 
 class App extends Component {
   render () {
@@ -16,6 +17,7 @@ class App extends Component {
           <Switch>
             <Route path="/" component={Home} exact />
             <Route path="/surf" component={SurfForecast} />
+            <Route path="/login" component={Login} />
           </Switch>
         </div>
       </BrowserRouter>
