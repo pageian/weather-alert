@@ -22,9 +22,25 @@ class Signup extends Component {
         else if(event.target.name == 'conf_password') this.setState({conf_password: event.target.value});
     }
 
+    signup() {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: this.state.name,
+                email: this.state.email,
+                conf_email: this.state.conf_email,
+                password: this.state.password,
+                conf_password: this.state.conf_password
+            })
+        };
+        fetch("http://localhost:3001/testAPI/signup", requestOptions)
+            .then(res => res.json())
+            .then(res => console.log(res));
+    }
+
     render () {
-        return (
-            
+        return (  
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-2"></div>
@@ -32,7 +48,6 @@ class Signup extends Component {
                         <h3 class="form-header">Please Sign Up with us</h3>
                         <hr></hr>
                     </div>
-
                 </div>
                 <div id="form-pad">
                     <div id="form-content">
@@ -54,6 +69,7 @@ class Signup extends Component {
                             </div>
                             <button type="button" 
                                     class="btn btn-primary"
+                                    onClick={() => this.signup()}
                                     >Sign Up</button>
                         </form>
                         <hr class="separator"></hr>
@@ -61,7 +77,6 @@ class Signup extends Component {
                     </div>
                 </div>
             </div>
-
         );
     }
 }

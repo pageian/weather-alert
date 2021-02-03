@@ -35,6 +35,7 @@ router.get('/', function(req, res, next) {
         text: 'That was easy!'
     };
       
+    // Commented out for now
     // transporter.sendMail(mailOptions, function(error, info){
     //     if (error) {
     //         console.log(error);
@@ -45,7 +46,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/login', function(req, res) {
-    if(req.email != "" || req.password != "") {
+    if(req.body.email != "" && req.body.password != "") {
         console.log(req.body.email, req.body.password)
         firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).then((user_auth) => {
           console.log(user_auth.user.uid);
@@ -57,10 +58,46 @@ router.post('/login', function(req, res) {
             console.log(err);
             res.send({
                 uid: "",
-                msg: err
+                msg: err.message
             });
         });
-      }
+    } else { res.send({ uid: "", msg: "ERROR make sure to fill all fields" }); }
+});
+
+router.post('/signup', function(req, res) {
+    console.log(req.body.name, req.body.email, req.body.conf_email, req.body.password, req.body.conf_password);
+    if(req.body.name != "" && req.body.email != "" && req.body.conf_email != "" && req.body.password != "" && req.body.conf_password != "") {
+        if(req.body.email == req.body.conf_email) {
+            if(req.body.password == req.body.conf_password) {
+
+                // create user auth account w/ firebase
+                firebase.auth().createUserWithEmailAndPassword(req.body.email, req.body.password).then((user_auth) => {
+
+                    // create firestore user record
+                    firebase.firestore().collection('Users').doc(user_auth.user.uid).set({name: req.body.name}).then((user) => {
+                        console.log(user_auth.user.uid);
+                        res.send({
+                            uid: user_auth.user.uid,
+                            msg: ""
+                        });
+
+                    }).catch((err) => {
+                        console.log(err);
+                        res.send({
+                            uid: "",
+                            msg: err.message
+                        });
+                    });
+                }).catch((err) => {
+                    console.log(err);
+                    res.send({
+                        uid: "",
+                        msg: err.message
+                    });
+                });
+            } else { res.send({ uid: "", msg: "ERROR make sure password match" }); }
+        } else { res.send({ uid: "", msg: "ERROR make sure emails match" }); }
+    } else { res.send({ uid: "", msg: "ERROR make sure to fill all fields" }); }
 });
 
 module.exports = router;
