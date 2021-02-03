@@ -1,6 +1,21 @@
 var express = require('express');
 var router = express.Router();
 var nodemailer = require('nodemailer');
+var firebase = require('firebase');
+
+firebaseConfig = {
+    apiKey: "AIzaSyBO0CU3zMrooSatIMswabol6ZFWi2X5ev8",
+    authDomain: "surf-alert-b0142.firebaseapp.com",
+    projectId: "surf-alert-b0142",
+    storageBucket: "surf-alert-b0142.appspot.com",
+    messagingSenderId: "842072331646",
+    appId: "1:842072331646:web:7bf6068e6717f16056cf2f",
+    measurementId: "G-M9TKCX42Z4"
+  }
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
 router.get('/', function(req, res, next) {
     res.send('API is working properly');
@@ -20,6 +35,7 @@ router.get('/', function(req, res, next) {
         text: 'That was easy!'
     };
       
+    // Commented out for now
     // transporter.sendMail(mailOptions, function(error, info){
     //     if (error) {
     //         console.log(error);
@@ -27,6 +43,61 @@ router.get('/', function(req, res, next) {
     //         console.log('Email sent: ' + info.response);
     //     }
     // });
+});
+
+router.post('/login', function(req, res) {
+    if(req.body.email != "" && req.body.password != "") {
+        console.log(req.body.email, req.body.password)
+        firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).then((user_auth) => {
+          console.log(user_auth.user.uid);
+          res.send({
+                uid: user_auth.user.uid,
+                msg: ""
+            });
+        }).catch((err) => {
+            console.log(err);
+            res.send({
+                uid: "",
+                msg: err.message
+            });
+        });
+    } else { res.send({ uid: "", msg: "ERROR make sure to fill all fields" }); }
+});
+
+router.post('/signup', function(req, res) {
+    console.log(req.body.name, req.body.email, req.body.conf_email, req.body.password, req.body.conf_password);
+    if(req.body.name != "" && req.body.email != "" && req.body.conf_email != "" && req.body.password != "" && req.body.conf_password != "") {
+        if(req.body.email == req.body.conf_email) {
+            if(req.body.password == req.body.conf_password) {
+
+                // create user auth account w/ firebase
+                firebase.auth().createUserWithEmailAndPassword(req.body.email, req.body.password).then((user_auth) => {
+
+                    // create firestore user record
+                    firebase.firestore().collection('Users').doc(user_auth.user.uid).set({name: req.body.name}).then((user) => {
+                        console.log(user_auth.user.uid);
+                        res.send({
+                            uid: user_auth.user.uid,
+                            msg: ""
+                        });
+
+                    }).catch((err) => {
+                        console.log(err);
+                        res.send({
+                            uid: "",
+                            msg: err.message
+                        });
+                    });
+                }).catch((err) => {
+                    console.log(err);
+                    res.send({
+                        uid: "",
+                        msg: err.message
+                    });
+                });
+            } else { res.send({ uid: "", msg: "ERROR make sure password match" }); }
+        } else { res.send({ uid: "", msg: "ERROR make sure emails match" }); }
+    } else { res.send({ uid: "", msg: "ERROR make sure to fill all fields" }); }
 });
 
 module.exports = router;

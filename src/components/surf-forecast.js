@@ -1,4 +1,7 @@
 import React, {Component} from 'react'
+import { Redirect } from 'react-router-dom';
+import Cookies from 'universal-cookie';
+
 var moment = require('moment');
 
 class SurfForecast extends Component {
@@ -45,30 +48,34 @@ class SurfForecast extends Component {
 
     render () {
 
-        if (!this.state.surf_forecast || !this.state.surf_forecast.data
-            || !this.state.surf_forecast.data.wave || !this.state.wind_forecast
-            || !this.state.wind_forecast.data || !this.state.wind_forecast.data.wind) {
-            return <span>Loading...</span>;
-        
-        } else {
-            this.addWindScore()
-            return (
-                <div>
-                    <center><div>Surf Forcast</div></center>
-                    {this.state.surf_forecast.data.wave.map((f) => (
-                        <div key={f.timestamp} class="card">
-                            <div class="card-body">
-                                <h6 class="card-subtitle mb-2 text-muted">{ moment(new Date(f.timestamp * 1000)).format('ddd, MMM D') }</h6>
-                                <h5 class="card-title">{f.surf.min}-{f.surf.max}m @ {this.maxPeriod(f.swells)}s</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">{f.surf.optimalScore}*</h6>
-                                {/* <p class="card-text">
-                                    max: {w.temp.max} C <br/>
-                                    min: {w.temp.min} C</p> */}
+        // redirecting to login if no active user
+        const cookies = new Cookies();
+        if(cookies.get('uid') == "" || !cookies.get('uid')){ return <Redirect to="/login" />; }
+        else {
+
+            if (!this.state.surf_forecast || !this.state.surf_forecast.data
+                || !this.state.surf_forecast.data.wave || !this.state.wind_forecast
+                || !this.state.wind_forecast.data || !this.state.wind_forecast.data.wind) { return <span>Loading...</span>; }
+            else {
+                this.addWindScore()
+                return (
+                    <div>
+                        <center><div>Surf Forcast</div></center>
+                        {this.state.surf_forecast.data.wave.map((f) => (
+                            <div key={f.timestamp} class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">{ moment(new Date(f.timestamp * 1000)).format('ddd, MMM D') }</h6>
+                                    <h5 class="card-title">{f.surf.min}-{f.surf.max}m @ {this.maxPeriod(f.swells)}s</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{f.surf.optimalScore}*</h6>
+                                    {/* <p class="card-text">
+                                        max: {w.temp.max} C <br/>
+                                        min: {w.temp.min} C</p> */}
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            );
+                        ))}
+                    </div>
+                );
+            }
         }
     }
 
@@ -101,9 +108,10 @@ class SurfForecast extends Component {
         })
         .catch(console.log)
 
-        fetch("http://localhost:3001/testAPI")
-        .then(res => res.text())
-        .then(res => console.log("TEST",res));
+        //email notif call
+        // fetch("http://localhost:3001/testAPI")
+        // .then(res => res.text())
+        // .then(res => console.log("TEST",res));
     } 
 };
 
