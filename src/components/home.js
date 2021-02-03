@@ -1,4 +1,6 @@
 import React, {Component} from 'react'
+import { Redirect } from 'react-router-dom';
+import Cookies from 'universal-cookie';
 
 import Forecast from './forecast';
 
@@ -6,26 +8,31 @@ class Home extends Component {
     
     render () {
 
-        if (!this.state.weather.current || !this.state.weather.daily) {
-            return <span>Loading...</span>;
-        }
+        // redirecting to login if no active user
+        const cookies = new Cookies();
+        if(cookies.get('uid') == "" || !cookies.get('uid')){ return <Redirect to="/login" />; }
+        else {
 
-        return (
-            <div>
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{this.state.weather.timezone}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{this.state.weather.current.weather[0].main}</h6>
-                        <p class="card-text">
-                        temp: {this.state.weather.current.temp} C <br/>
-                        feels like: {this.state.weather.current.feels_like} C
-                        </p>
-                        {/* <p class="card-text">feels like: {this.state.weather.current.feels_like} C</p> */}
+            if (!this.state.weather.current || !this.state.weather.daily) { return <span>Loading...</span>; }
+            else {
+                return (
+                    <div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{this.state.weather.timezone}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{this.state.weather.current.weather[0].main}</h6>
+                                <p class="card-text">
+                                temp: {this.state.weather.current.temp} C <br/>
+                                feels like: {this.state.weather.current.feels_like} C
+                                </p>
+                                {/* <p class="card-text">feels like: {this.state.weather.current.feels_like} C</p> */}
+                            </div>
+                        </div>
+                        <Forecast forecast={ this.state.weather.daily } />
                     </div>
-                </div>
-                <Forecast forecast={ this.state.weather.daily } />
-            </div>
-        );
+                );
+            }
+        }
     }
     
     state = {
