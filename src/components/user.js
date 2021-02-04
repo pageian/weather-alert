@@ -17,15 +17,21 @@ class User extends Component {
                 <h1>Settings</h1>
                 <Form>
                     <Form.Group controlId="formWaveHeight">
-                        <Form.Label>Wave height</Form.Label>
+                        <Form.Label>Min. wave height</Form.Label>
                         <Form.Control type="number" placeholder="min. wave height" />
+                        <Form.Label>Max. wave height</Form.Label>
                         <Form.Control type="number" placeholder="max. wave height" />
                     </Form.Group>
 
                     <Form.Group controlId="formWavePeriod">
-                        <Form.Label>Wave period</Form.Label>
+                        <Form.Label>Min. wave period</Form.Label>
                         <Form.Control type="number" placeholder="min. wave period" />
+                        <Form.Label>Max. wave period</Form.Label>
                         <Form.Control type="number" placeholder="max. wave period" />
+                    </Form.Group>
+
+                    <Form.Group controlId="formBasicCheckbox">
+                        <Form.Check type="checkbox" label="activate notifications" />
                     </Form.Group>
 
                     <Form.Group controlId="formBasicCheckbox">
