@@ -45,6 +45,7 @@ router.get('/', function(req, res, next) {
     // });
 });
 
+// logs user in
 router.post('/login', function(req, res) {
     if(req.body.email != "" && req.body.password != "") {
         console.log(req.body.email, req.body.password)
@@ -64,6 +65,7 @@ router.post('/login', function(req, res) {
     } else { res.send({ uid: "", msg: "ERROR make sure to fill all fields" }); }
 });
 
+// creates new user account
 router.post('/signup', function(req, res) {
     console.log(req.body.name, req.body.email, req.body.conf_email, req.body.password, req.body.conf_password);
     if(req.body.name != "" && req.body.email != "" && req.body.conf_email != "" && req.body.password != "" && req.body.conf_password != "") {
@@ -73,8 +75,19 @@ router.post('/signup', function(req, res) {
                 // create user auth account w/ firebase
                 firebase.auth().createUserWithEmailAndPassword(req.body.email, req.body.password).then((user_auth) => {
 
+                    // base user account
+                    var new_user = {
+                        name: req.body.name,
+                        metric: true,
+                        notifs: false,
+                        min_height: 0,
+                        max_height: 0,
+                        min_period: 0,
+                        max_period: 0
+                    }
+
                     // create firestore user record
-                    firebase.firestore().collection('Users').doc(user_auth.user.uid).set({name: req.body.name}).then((user) => {
+                    firebase.firestore().collection('Users').doc(user_auth.user.uid).set(new_user).then((user) => {
                         console.log(user_auth.user.uid);
                         res.send({
                             uid: user_auth.user.uid,
@@ -98,6 +111,47 @@ router.post('/signup', function(req, res) {
             } else { res.send({ uid: "", msg: "ERROR make sure password match" }); }
         } else { res.send({ uid: "", msg: "ERROR make sure emails match" }); }
     } else { res.send({ uid: "", msg: "ERROR make sure to fill all fields" }); }
+});
+
+// retrieves settings for user
+router.get('/settings', function(req, res) {
+    console.log("TEST", req.query.uid)
+    firebase.firestore().collection('Users').doc(req.query.uid).get().then((user) => {
+        console.log(user.data());
+        res.send(user.data());
+    }).catch((err) => {
+        console.log(err);
+        res.send({
+            uid: "",
+            msg: err.message
+        });
+    });
+});
+
+router.put('/settings', function(req, res) {
+    console.log("TEST", req.body)
+
+    var user_settings = {
+        name: req.body.name,
+        metric: req.body.metric,
+        notifs: req.body.notifs,
+        min_height: req.body.min_height,
+        max_height: req.body.max_height,
+        min_period: req.body.min_period,
+        max_period: req.body.max_period
+    }
+
+    firebase.firestore().collection('Users').doc(req.body.uid).update(user_settings).then(() => {
+        console.log();
+        res.send({
+            msg: ""
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.send({
+            msg: err.message
+        });
+    });
 });
 
 module.exports = router;

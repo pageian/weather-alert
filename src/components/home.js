@@ -5,6 +5,7 @@ import Nav from 'react-bootstrap/Nav'
 
 import Forecast from './forecast';
 import SurfForecast from './surf-forecast';
+import User from './user';
 
 class Home extends Component {
     
@@ -28,6 +29,7 @@ class Home extends Component {
             case '': return <Forecast />    // defines default page
             case 'forecast': return <Forecast />
             case 'surf-forecast': return <SurfForecast />
+            case 'user': return <User />
         }
     }
 
@@ -50,7 +52,7 @@ class Home extends Component {
                             <Nav.Link onClick={() => this.setState({active_page:'surf-forecast'}) }>Surf Forecast</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link href="/surf">Settings</Nav.Link>
+                            <Nav.Link onClick={() => this.setState({active_page:'user'}) }>User Settings</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link onClick={() => this.logout()}>Logout</Nav.Link>

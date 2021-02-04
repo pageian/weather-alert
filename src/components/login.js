@@ -25,19 +25,19 @@ class Login extends Component {
             body: JSON.stringify({ email: this.state.email, password: this.state.password })
         };
         fetch("http://localhost:3001/testAPI/login", requestOptions)
-            .then(res => res.json())
-            .then(res => {
-                console.log(res);
+        .then(res => res.json())
+        .then(res => {
+            console.log(res);
 
-                if(res.uid && res.uid != "") {
-                    console.log("LOGGING IN")
-                    cookies.set('uid', res.uid);
-                    this.forceUpdate()
-                } else {
-                    //TODO: alert msg
-                    console.log("ERROR");
-                }
-            });
+            if(res.uid && res.uid != "") {
+                console.log("LOGGING IN")
+                cookies.set('uid', res.uid);
+                this.forceUpdate()
+            } else {
+                //TODO: alert msg
+                console.log("ERROR");
+            }
+        });
     }
 
     render () {
