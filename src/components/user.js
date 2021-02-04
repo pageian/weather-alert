@@ -24,7 +24,10 @@ class User extends Component {
         else if(event.target.name == 'max_height') this.setState({max_height: event.target.value});
         else if(event.target.name == 'min_period') this.setState({min_period: event.target.value});
         else if(event.target.name == 'max_period') this.setState({max_period: event.target.value});
-        else if(event.target.name == 'notifs') this.setState({notifs: event.target.value});
+        else if(event.target.name == 'notifs') {
+            if (this.state.notifs == true) this.setState({notifs: false});
+            else                           this.setState({notifs: true});
+        }
         else if(event.target.name == 'metric') this.setState({metric: event.target.value});
     }
 
