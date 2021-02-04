@@ -22,7 +22,6 @@ class App extends Component {
       <div>
         <Switch>
           <Route path="/" component={Home} exact />
-          <Route path="/surf" component={SurfForecast} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
         </Switch>
