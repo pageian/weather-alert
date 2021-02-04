@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var nodemailer = require('nodemailer');
 var firebase = require('firebase');
+var request = require('request');
 
 firebaseConfig = {
     apiKey: "AIzaSyBO0CU3zMrooSatIMswabol6ZFWi2X5ev8",
@@ -128,6 +129,7 @@ router.get('/settings', function(req, res) {
     });
 });
 
+// updates settings
 router.put('/settings', function(req, res) {
     console.log("TEST", req.body)
 
@@ -152,6 +154,20 @@ router.put('/settings', function(req, res) {
             msg: err.message
         });
     });
+});
+
+// get weather data for halifax
+router.get('/weather', function(req, res) {
+    request('http://api.openweathermap.org/data/2.5/onecall?lat=44.648618&lon=-63.5859487&exclude=minutely,hourly&units=metric&appid=a28eff83ec6108abef556025bece0213', function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body)
+            res.send(JSON.parse(body));
+        }
+    })
+});
+
+router.get('/allspots', function(req, res) {
+
 });
 
 module.exports = router;

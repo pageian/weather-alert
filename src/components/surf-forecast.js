@@ -10,7 +10,8 @@ class SurfForecast extends Component {
             surf_forecast: [],
             wind_forecast: [],
             tides_forecast: [],
-            spotId: ''
+            spotId: '',
+            score_summed: false
         }
     }
 
@@ -38,9 +39,11 @@ class SurfForecast extends Component {
 
     // adds windscore to surf forecast for full score
     addWindScore() {
-
-        for(var i = 0; i < this.state.wind_forecast.data.wind.length; i++) {
-            this.state.surf_forecast.data.wave[i].surf.optimalScore += this.state.wind_forecast.data.wind[i].optimalScore;
+        if(!this.state.score_summed) {
+            for(var i = 0; i < this.state.wind_forecast.data.wind.length; i++) {
+                this.state.surf_forecast.data.wave[i].surf.optimalScore += this.state.wind_forecast.data.wind[i].optimalScore;
+            }
+            this.setState({score_summed: true});
         }
     }
 

@@ -6,6 +6,7 @@ import Nav from 'react-bootstrap/Nav'
 import Forecast from './forecast';
 import SurfForecast from './surf-forecast';
 import User from './user';
+import MyFeed from './my-feed';
 
 class Home extends Component {
     
@@ -26,7 +27,7 @@ class Home extends Component {
 
     render_active_page () {
         switch(this.state.active_page) {
-            case '': return <Forecast />    // defines default page
+            case '': return <MyFeed />    // defines default page
             case 'forecast': return <Forecast />
             case 'surf-forecast': return <SurfForecast />
             case 'user': return <User />

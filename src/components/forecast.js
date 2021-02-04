@@ -53,7 +53,7 @@ class Forecast extends Component {
             this.setState({ forecast: data })
             console.log(data)
     
-        }).catch(console.log)     
+        }).catch(console.log)   
     } 
 };
 
