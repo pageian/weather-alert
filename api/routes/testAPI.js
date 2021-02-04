@@ -160,14 +160,52 @@ router.put('/settings', function(req, res) {
 router.get('/weather', function(req, res) {
     request('http://api.openweathermap.org/data/2.5/onecall?lat=44.648618&lon=-63.5859487&exclude=minutely,hourly&units=metric&appid=a28eff83ec6108abef556025bece0213', function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            console.log(body)
             res.send(JSON.parse(body));
         }
     })
 });
 
-router.get('/allspots', function(req, res) {
+// gets all surf spots
+router.get('/surfspots', function(req, res) {
+    var response = []
+    firebase.firestore().collection("Spots").get().then((snapshot) => {
+        snapshot.docs.map((doc) => {
+            response.push(doc.data())
+        });
+        res.send(response);
+    });
+});
 
+router.get('/surfdata', function(req, res) {
+
+    var data = [];
+
+    //surf forecast
+    request('https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=' + req.query.spot_id + '&intervalHours=24', function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(JSON.parse(body));
+            data.push(JSON.parse(body));
+            res.send(JSON.parse(body));
+        }
+    })
+
+    // // wind query
+    // request('https://services.surfline.com/kbyg/spots/forecasts/wind?spotId=' + req.query.spot_id + '&intervalHours=24', function (error, response, body) {
+    //     if (!error && response.statusCode == 200) {
+    //         console.log(JSON.parse(body));
+    //         data.push(JSON.parse(body));
+    //     }
+    // })
+
+    // // tides query
+    // request('https://services.surfline.com/kbyg/spots/forecasts/tides?spotId=' + req.query.spot_id + '&intervalHours=24', function (error, response, body) {
+    //     if (!error && response.statusCode == 200) {
+    //         console.log(JSON.parse(body));
+    //         data.push(JSON.parse(body));
+    //     }
+    // })
+
+    //res.send(respose)
 });
 
 module.exports = router;
