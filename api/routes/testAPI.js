@@ -128,4 +128,30 @@ router.get('/settings', function(req, res) {
     });
 });
 
+router.put('/settings', function(req, res) {
+    console.log("TEST", req.body)
+
+    var user_settings = {
+        name: req.body.name,
+        metric: req.body.metric,
+        notifs: req.body.notifs,
+        min_height: req.body.min_height,
+        max_height: req.body.max_height,
+        min_period: req.body.min_period,
+        max_period: req.body.max_period
+    }
+
+    firebase.firestore().collection('Users').doc(req.body.uid).update(user_settings).then(() => {
+        console.log();
+        res.send({
+            msg: ""
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.send({
+            msg: err.message
+        });
+    });
+});
+
 module.exports = router;

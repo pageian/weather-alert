@@ -28,6 +28,30 @@ class User extends Component {
         else if(event.target.name == 'metric') this.setState({metric: event.target.value});
     }
 
+    submitForm () {
+        const cookies = new Cookies();
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                uid: cookies.get('uid'),
+                name: this.state.name,
+                min_height: this.state.min_height,
+                max_height: this.state.max_height,
+                min_period: this.state.min_period,
+                max_period: this.state.max_period,
+                metric: this.state.metric,
+                notifs: this.state.notifs
+            })
+        };
+        fetch("http://localhost:3001/testAPI/settings", requestOptions)
+        .then(res => res.json())
+        .then(res => {
+            console.log(res);
+
+        });
+    }
+
     render () {
         return(
             <div>
@@ -60,7 +84,7 @@ class User extends Component {
                         <Form.Check type="radio" name="" checked={this.state.metric} onChange={this.updateField.bind(this)} label="metric" />
                         <Form.Check type="radio" name="" label="imperial" />
                     </Form.Group>
-                    <Button variant="primary" type="submit">
+                    <Button variant="primary" type="button" onClick={() => this.submitForm()}>
                         Submit
                     </Button>
                 </Form>
@@ -69,6 +93,7 @@ class User extends Component {
         );
     }
 
+    // retrieve user settings
     componentDidMount() {
         const cookies = new Cookies();
         fetch('http://localhost:3001/testAPI/settings?uid=' + cookies.get('uid'))
