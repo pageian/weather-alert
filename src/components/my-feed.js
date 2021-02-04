@@ -42,7 +42,8 @@ class MyFeed extends Component {
     }
 
     render () {
-        if (!this.state.forecast.current || !this.state.forecast.daily || !this.state.forecast.daily[0].weather || !this.state.surf_spots.length > 0 || !this.state.surf_spots[0].waves) { return <span>Loading...</span>; }
+        if (!this.state.forecast.current || !this.state.forecast.daily || !this.state.forecast.daily[0].weather
+            || !this.state.surf_spots.length > 0 || !this.state.surf_spots[0].data|| !this.state.surf_spots[0].data.waves.length > 0) { return <span>Loading...</span>; }
         else {
             return (
                 <div>
@@ -73,7 +74,7 @@ class MyFeed extends Component {
                                 id: {spot.id}
                             </Card.Text>
                             <hr />
-                            <Card.Subtitle className="mb-2 text-muted">{spot.waves[0].surf.min}-{spot.waves[0].surf.max}</Card.Subtitle>
+                            <Card.Subtitle className="mb-2 text-muted">{spot.data.waves[0].surf.min}-{spot.data.waves[0].surf.max}m</Card.Subtitle>
                             <Card.Text>
                                 max: {this.getWeeklyHigh()[0]}c on {moment(new Date(this.getWeeklyHigh()[1] * 1000)).format('ddd, MMM D')}<br/>
                                 min: {this.getWeeklyLow()[0]}c on {moment(new Date(this.getWeeklyLow()[1] * 1000)).format('ddd, MMM D')}
@@ -109,33 +110,19 @@ class MyFeed extends Component {
         .then(res => res.json())
         .then((spots) => {
             
-            //getting surf data for each spot
+            //getting wave data for each spot
             spots.forEach(function(spot, i) {
                 console.log("ID", spot.id)
                 fetch('http://localhost:3001/testAPI/surfdata?spot_id=' + spot.id)
                 .then(res => res.json())
-                .then((waves) => {
-                    console.log("DATA", waves);
-                    spot.waves = waves.data.wave;
+                .then((data) => {
+                    console.log("DATA", data);
+                    spot.data = data;
                     this.setState({surf_spots: this.state.surf_spots.concat(spot)});
                     console.log("TEST", this.state.surf_spots)
+
                 });
             }, this);
-            // for (var i = 0; i < spots.length; i++) {
-
-            //     //console.log(spots[i].data = this.getSurfData(spots[i].id));
-
-
-            //     //this.setState(surf_spots: this.state.surf_spots.concat())
-            //     // fetch('http://localhost:3001/testAPI/surfdata?spot_id=' + spots[i].id)
-            //     // .then(res => res.json())
-            //     // .then((data) => {
-            //     //     this.setState({surf_data: this.state.surf_data.concat(data)})
-            //     //     console.log(this.state.surf_data)
-            //     // }).catch(console.log) 
-                
-            // }
-            //console.log("TEST", this.state.surf_spots)
         }).catch(console.log) 
     } 
 };
