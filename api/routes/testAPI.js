@@ -113,4 +113,19 @@ router.post('/signup', function(req, res) {
     } else { res.send({ uid: "", msg: "ERROR make sure to fill all fields" }); }
 });
 
+// retrieves settings for user
+router.get('/settings', function(req, res) {
+    console.log("TEST", req.query.uid)
+    firebase.firestore().collection('Users').doc(req.query.uid).get().then((user) => {
+        console.log(user.data());
+        res.send(user.data());
+    }).catch((err) => {
+        console.log(err);
+        res.send({
+            uid: "",
+            msg: err.message
+        });
+    });
+});
+
 module.exports = router;
