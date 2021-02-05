@@ -40,6 +40,48 @@ class MyFeed extends Component {
         return [week_low, timestamp];
     }
 
+    getHeightRange(waves) {
+        var min = waves[0].surf.min;
+        var max = waves[0].surf.max;
+
+        for(var i = 1; i < waves.length; i++) {
+            if(min > waves[i].surf.min) min = waves[i].surf.min;
+            if(max < waves[i].surf.max) max = waves[i].surf.max;
+        }
+
+        return (min + "-" + max + "m");
+    }
+
+    getPeriodRange(waves) {
+        var min = 111;
+        var max = -1;
+
+        for(var i = 0; i < waves.length; i++) {
+            // trimming empty records
+            for(var j = 0; j < waves[i].swells.length; j++) {
+                if(waves[i].swells[j].height == 0) {
+                    waves[i].swells.splice(j, 1);
+                }
+            }
+
+            // retreiving main swell
+            var max_i = -1;
+            var max_height = -1;
+            for(var j = 0; j < waves[i].swells.length; j++) {
+                if(waves[i].swells[j].height > max_height) {
+                    max_i = j;
+                    max_height = waves[i].swells[j].height;
+                }
+            }
+
+            // comparing main swell to current ranges
+            if(min > waves[i].swells[max_i].period) min = waves[i].swells[max_i].period;
+            if(max < waves[i].swells[max_i].period) max = waves[i].swells[max_i].period;
+        }
+
+        return (min + "-" + max + "s");
+    }
+
     render () {
         if (!this.state.forecast.current || !this.state.forecast.daily || !this.state.forecast.daily[0].weather
             || !this.state.surf_spots.length > 0 || !this.state.surf_spots[0].data|| !this.state.surf_spots[0].data.waves.length > 0) { return <span>Loading...</span>; }
@@ -70,13 +112,14 @@ class MyFeed extends Component {
                             <Card.Title>{spot.name}</Card.Title>
                             
                             <Card.Text>
-                                id: {spot.id}
+                                id: {spot.id} <br/>
+                                {spot.data.waves[0].surf.min}-{spot.data.waves[0].surf.max}m
                             </Card.Text>
                             <hr />
-                            <Card.Subtitle className="mb-2 text-muted">{spot.data.waves[0].surf.min}-{spot.data.waves[0].surf.max}m</Card.Subtitle>
+                            <Card.Subtitle className="mb-2 text-muted">Week Summary</Card.Subtitle>
                             <Card.Text>
-                                max: {this.getWeeklyHigh()[0]}c on {moment(new Date(this.getWeeklyHigh()[1] * 1000)).format('ddd, MMM D')}<br/>
-                                min: {this.getWeeklyLow()[0]}c on {moment(new Date(this.getWeeklyLow()[1] * 1000)).format('ddd, MMM D')}
+                                swell height: {this.getHeightRange(spot.data.waves)}<br/>
+                                swell period: {this.getPeriodRange(spot.data.waves)}
                             </Card.Text>
                         </Card.Body>
                     </Card>
