@@ -8,8 +8,7 @@ class MyFeed extends Component {
         super();
         this.state = {
             forecast: [],
-            surf_spots: [],
-            surf_data: []
+            surf_spots: []
         }
     }
 
