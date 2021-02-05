@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-
+import Dropdown from 'react-bootstrap/Dropdown'
 var moment = require('moment');
 
 class SurfForecast extends Component {
@@ -7,10 +7,8 @@ class SurfForecast extends Component {
     constructor() {
         super();
         this.state = {
-            surf_forecast: [],
-            wind_forecast: [],
-            tides_forecast: [],
-            spotId: ''
+            surf_spots: [],
+            active_spot_index: 0
         }
     }
 
@@ -36,34 +34,42 @@ class SurfForecast extends Component {
         return swells[maxi].period
     }
 
-    // adds windscore to surf forecast for full score
-    addWindScore() {
-
-        for(var i = 0; i < this.state.wind_forecast.data.wind.length; i++) {
-            this.state.surf_forecast.data.wave[i].surf.optimalScore += this.state.wind_forecast.data.wind[i].optimalScore;
-        }
-    }
-
     render () {
-        if (!this.state.surf_forecast || !this.state.surf_forecast.data
-            || !this.state.surf_forecast.data.wave || !this.state.wind_forecast
-            || !this.state.wind_forecast.data || !this.state.wind_forecast.data.wind) { return <span>Loading...</span>; }
+        if (!this.state.surf_spots.length > 0 || !this.state.surf_spots[0].data|| !this.state.surf_spots[0].data.waves.length > 0) { return <span>Loading...</span>; }
         else {
-            this.addWindScore()
             return (
                 <div>
                     <center><div>Surf Forcast</div></center>
-                    {this.state.surf_forecast.data.wave.map((f) => (
+                    <Dropdown>
+                        <Dropdown.Toggle variant="success" id="dropdown-basic">
+                            {this.state.surf_spots[this.state.active_spot_index].name}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            {this.state.surf_spots.map((surf_spot) => (
+                                <Dropdown.Item key={surf_spot.id} onClick={() => this.setState({active_spot_index: this.state.surf_spots.indexOf(surf_spot)})}>{surf_spot.name}</Dropdown.Item>
+                            ))}
+                        </Dropdown.Menu>
+                    </Dropdown>
+                    
+
+                    {this.state.surf_spots[this.state.active_spot_index].data.waves.map((f) => (
                         <div key={f.timestamp} class="card">
                             <div class="card-body">
                                 <h6 class="card-subtitle mb-2 text-muted">{ moment(new Date(f.timestamp * 1000)).format('ddd, MMM D') }</h6>
                                 <h5 class="card-title">{f.surf.min}-{f.surf.max}m @ {this.maxPeriod(f.swells)}s</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">{f.surf.optimalScore}*</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">{ /* summing wave and wind scores for total */
+                                        f.surf.optimalScore
+                                        + this.state.surf_spots[this.state.active_spot_index]
+                                        .data.winds[this.state.surf_spots[this.state.active_spot_index]
+                                        .data.waves.indexOf(f)].optimalScore
+                                    }*
+                                </h6>
                                 {/* <p class="card-text">
                                     max: {w.temp.max} C <br/>
-                                    min: {w.temp.min} C</p> */}
+                                    min: {w.temp.min} C
+                                </p> */}
                             </div>
-                        </div>
+                         </div>
                     ))}
                 </div>
             );
@@ -71,33 +77,25 @@ class SurfForecast extends Component {
     }
 
     componentDidMount() {
-        // lawrencetown forecast
-        fetch('https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=58bdfa7882d034001252e3d8&intervalHours=24')
+        //getting surf spots
+        fetch('http://localhost:3001/testAPI/surfspots')
         .then(res => res.json())
-        .then((surf_data) => {
+        .then((spots) => {
+            
+            //getting wave data for each spot
+            spots.forEach(function(spot, i) {
+                console.log("ID", spot.id)
+                fetch('http://localhost:3001/testAPI/surfdata?spot_id=' + spot.id)
+                .then(res => res.json())
+                .then((data) => {
+                    console.log("DATA", data);
+                    spot.data = data;
+                    this.setState({surf_spots: this.state.surf_spots.concat(spot)});
+                    console.log("TEST", this.state.surf_spots)
 
-            this.setState({ surf_forecast: surf_data })
-            console.log(surf_data)
-        })
-        .catch(console.log)
-
-        // wind query
-        fetch('https://services.surfline.com/kbyg/spots/forecasts/wind?spotId=58bdfa7882d034001252e3d8&intervalHours=24')
-        .then(res => res.json())
-        .then((data) => {
-            this.setState({ wind_forecast: data })
-            console.log(data)
-        })
-        .catch(console.log)
-
-        // tides query
-        fetch('https://services.surfline.com/kbyg/spots/forecasts/tides?spotId=58bdfa7882d034001252e3d8&intervalHours=24')
-        .then(res => res.json())
-        .then((data) => {
-            this.setState({ tides_forecast: data })
-            console.log(data)
-        })
-        .catch(console.log)
+                });
+            }, this);
+        }).catch(console.log)
 
         //email notif call
         // fetch("http://localhost:3001/testAPI")

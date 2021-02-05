@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var nodemailer = require('nodemailer');
 var firebase = require('firebase');
+var request = require('request');
 
 firebaseConfig = {
     apiKey: "AIzaSyBO0CU3zMrooSatIMswabol6ZFWi2X5ev8",
@@ -128,6 +129,7 @@ router.get('/settings', function(req, res) {
     });
 });
 
+// updates settings
 router.put('/settings', function(req, res) {
     console.log("TEST", req.body)
 
@@ -152,6 +154,70 @@ router.put('/settings', function(req, res) {
             msg: err.message
         });
     });
+});
+
+// get weather data for halifax
+router.get('/weather', function(req, res) {
+    request('http://api.openweathermap.org/data/2.5/onecall?lat=44.648618&lon=-63.5859487&exclude=minutely,hourly&units=metric&appid=a28eff83ec6108abef556025bece0213', function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            res.send(JSON.parse(body));
+        }
+    })
+});
+
+// gets all surf spots
+router.get('/surfspots', function(req, res) {
+    var response = []
+    firebase.firestore().collection("Spots").get().then((snapshot) => {
+        snapshot.docs.map((doc) => {
+            response.push(doc.data())
+        });
+        res.send(response);
+    });
+});
+
+router.get('/surfdata', function(req, res) {
+
+    var int_hour = 24;
+    var data = {};
+
+    //surf forecast
+    request('https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour, function (err0, res0, body0) {
+        if (!err0 && res0.statusCode == 200) {
+            console.log(JSON.parse(body0));
+            data.waves = JSON.parse(body0).data.wave;
+
+            // tides query
+            request('https://services.surfline.com/kbyg/spots/forecasts/tides?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour, function (err1, res1, body1) {
+                if (!err1 && res1.statusCode == 200) {
+                    console.log(JSON.parse(body1));
+                    data.tides = JSON.parse(body1).data.tides;
+
+                    // wind query
+                    request('https://services.surfline.com/kbyg/spots/forecasts/wind?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour, function (err2, res2, body2) {
+                        if (!err2 && res2.statusCode == 200) {
+                            console.log(JSON.parse(body2));
+                            data.winds = JSON.parse(body2).data.wind;
+
+                            // weather query
+                            request('https://services.surfline.com/kbyg/spots/forecasts/weather?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour, function (err3, res3, body3) {
+                                if (!err3 && res3.statusCode == 200) {
+                                    console.log(JSON.parse(body3));
+                                    data.weather = JSON.parse(body3).data;
+
+                                    res.send(data);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    
+
+    //res.send(respose)
 });
 
 module.exports = router;
