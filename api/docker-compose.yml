@@ -1,0 +1,10 @@
+version: '1'
+services:
+  web:
+    build: .
+    command: npm start
+    volumes:
+      - ./
+      - ./node_modules
+    ports:
+      - 80:8080
