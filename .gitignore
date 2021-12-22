@@ -23,3 +23,9 @@ yarn-debug.log*
 yarn-error.log*
 
 .eslintcache
+
+# api
+./api/node_modules
+npm-debug.log
+.DS_Store
+/*.env
