@@ -30,6 +30,16 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+### Deployment
+
+The frontend is hosted on Firebase hosting. To deploy run `firebase deploy --only hosting` from the roo project directory.
+
 ## Backend
 
+### running locally
+
 run `npm start` in `api/` directory
+
+### Deployment
+
+The backend is deployed on Heroku. To deploy, commit the latest changes and run `git push heroku master` from the project directory.
