@@ -181,32 +181,45 @@ router.get('/surfdata', function(req, res) {
     var int_hour = 24;
     var data = {};
 
+    //test legacy
+    request('http://api.surfline.com/v1/forecasts/4991?resources=surf&days=1&getAllSpots=false&units=e&interpolate=true&showOptimal=false', function(err, res0, body) {
+        console.log('LEGACY OUTPUT', err, res0.statusCode);
+    });
+
+    request('https://services.surfline.com/kbyg/regions/forecasts/conditions?subregionId=58581a836630e24c44878fd4&days=6', function(err, res, body) {
+        console.log('NEW NEW', err, res.statusCode);
+    })
+
+    request('https://services.surfline.com/trusted/token?isShortLived=false', function(err, res, body) {
+        console.log('LOGIN', err, res.statusCode);
+    });
+
     //surf forecast
     request('https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour, function (err0, res0, body0) {
         if (!err0 && res0.statusCode == 200) {
             // console.log(JSON.parse(body0));
-            console.log('GOT WAVE DATA');
+            // console.log('GOT WAVE DATA');
             data.waves = JSON.parse(body0).data.wave;
 
             // tides query
             request('https://services.surfline.com/kbyg/spots/forecasts/tides?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour, function (err1, res1, body1) {
                 if (!err1 && res1.statusCode == 200) {
                     // console.log(JSON.parse(body1));
-                    console.log('GOT TIDE DATA');
+                    // console.log('GOT TIDE DATA');
                     data.tides = JSON.parse(body1).data.tides;
 
                     // wind query
                     request('https://services.surfline.com/kbyg/spots/forecasts/wind?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour, function (err2, res2, body2) {
                         if (!err2 && res2.statusCode == 200) {
                             // console.log(JSON.parse(body2));
-                            console.log('GOT WIND DATA');
+                            // console.log('GOT WIND DATA');
                             data.winds = JSON.parse(body2).data.wind;
 
                             // weather query
                             request('https://services.surfline.com/kbyg/spots/forecasts/weather?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour, function (err3, res3, body3) {
                                 if (!err3 && res3.statusCode == 200) {
                                     // console.log(JSON.parse(body3));
-                                    console.log('GOT WEATHER DATA');
+                                    // console.log('GOT WEATHER DATA');
                                     data.weather = JSON.parse(body3).data;
 
                                     res.send(data);
@@ -217,7 +230,7 @@ router.get('/surfdata', function(req, res) {
                 }
             });
         } else {
-            console.log('ERROR RETRIEVING', err0, res0, body0);
+            // console.log('ERROR RETRIEVING', err0, res0, body0);
         }
     });
 
