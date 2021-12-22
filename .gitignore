@@ -29,3 +29,6 @@ yarn-error.log*
 npm-debug.log
 .DS_Store
 /*.env
+
+# firebase
+.firebase
