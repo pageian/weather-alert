@@ -217,7 +217,7 @@ router.get('/surfdata', function(req, res) {
                 }
             });
         } else {
-            console.log('ERROR RETRIEVING', err0);
+            console.log('ERROR RETRIEVING', err0, res0, body0);
         }
     });
 
