@@ -331,7 +331,6 @@ router.get('/securedata', function(req, res) {
 
 
 router.get('/surfdata', function(req, res) {
-    console.log('GETTING SUF DATA');
     var int_hour = 24;
     var data = {};
 
@@ -390,16 +389,20 @@ router.get('/surfdata', function(req, res) {
 
     //surf forecast
     request(forecastRequest, function (err0, res0, body0) {
-        if (!err0 && res0.statusCode == 200) {
+        console.log('GETTING FORECAST');
+        if (!err0 && res0.statusCode === 200) {
+            console.log('GOT FORECAST');
             // console.log(JSON.parse(body0));
             // console.log('GOT WAVE DATA');
             data.waves = JSON.parse(body0).data.wave;
 
             // tides query
             request(tidesRequest, function (err1, res1, body1) {
+                console.log('GETTING TIDES');
                 if (!err1 && res1.statusCode == 200) {
                     // console.log(JSON.parse(body1));
                     // console.log('GOT TIDE DATA');
+                    console.log('GOT TIDES');
                     data.tides = JSON.parse(body1).data.tides;
 
                     // wind query
@@ -424,7 +427,7 @@ router.get('/surfdata', function(req, res) {
                 }
             });
         } else {
-            // console.log('ERROR RETRIEVING', err0, res0, body0);
+            console.log('ERROR RETRIEVING', err0, res0);
         }
     });
 
