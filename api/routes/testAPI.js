@@ -184,7 +184,7 @@ router.get('/testdata', function(req, res) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer 403e69522cbc2832dda6ef6513fc165440b12612',
+            // 'Authorization': 'Bearer 403e69522cbc2832dda6ef6513fc165440b12612',
             'accept-language': 'en',
             'sec-fetch-mode': 'cors',
             'sec-fetch-site': 'same-site',
@@ -197,7 +197,7 @@ router.get('/testdata', function(req, res) {
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
             'authority': 'services.surfline.com',
-            'Cookie': 'connect.sid=s%3A6URcutTPKOMWgfj8hEaUT27bG5TV3B6L.PbimGct0HOOyjvTZUr7HbgG706XIvvskLnhFZNFZENQ'
+            // 'Cookie': 'connect.sid=s%3A6URcutTPKOMWgfj8hEaUT27bG5TV3B6L.PbimGct0HOOyjvTZUr7HbgG706XIvvskLnhFZNFZENQ'
         }
     }
 
