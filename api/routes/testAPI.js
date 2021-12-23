@@ -176,6 +176,159 @@ router.get('/surfspots', function(req, res) {
     });
 });
 
+// testing surfline endpoints
+router.get('/testdata', function(req, res) {
+    var requestOptions = {
+        uri: 'https://services.surfline.com/kbyg/regions/forecasts/conditions?subregionId=58581a836630e24c44878fd4&days=6&accessToken=403e69522cbc2832dda6ef6513fc165440b12612',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 403e69522cbc2832dda6ef6513fc165440b12612',
+            'accept-language': 'en',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-dest': 'empty',
+            'origin': 'https://www.surfline.com',
+            'sec-ch-ua-platform': '"macOS"',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+            'accept': 'application/json',
+            'credentials': 'same-origin',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+            'authority': 'services.surfline.com',
+            'Cookie': 'connect.sid=s%3A6URcutTPKOMWgfj8hEaUT27bG5TV3B6L.PbimGct0HOOyjvTZUr7HbgG706XIvvskLnhFZNFZENQ'
+        }
+    }
+
+    request(requestOptions, function(err0, res0, body0) {
+        console.log('SURFDATA', err0, res0, body0);
+        res.send(body0);
+    });
+}); 
+
+// testing login
+router.get('/testlogin', function(req, res) {
+    var requestOptions = {
+        uri: 'https://services.surfline.com/trusted/token?isShortLived=false',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic NWM1OWU3YzNmMGI2Y2IxYWQwMmJhZjY2OnNrX1FxWEpkbjZOeTVzTVJ1MjdBbWcz',
+            'accept-language': 'en',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-dest': 'empty',
+            'origin': 'https://www.surfline.com',
+            'sec-ch-ua-platform': '"macOS"',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+            'accept': 'application/json',
+            'credentials': 'same-origin',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+            'authority': 'services.surfline.com',
+            // 'Cookie': 'connect.sid=s%3A6URcutTPKOMWgfj8hEaUT27bG5TV3B6L.PbimGct0HOOyjvTZUr7HbgG706XIvvskLnhFZNFZENQ'
+        },
+        body: JSON.stringify({
+            "grant_type":"password",
+            "username":"ian1239998@gmail.com",
+            "password":"monkeys12399",
+            "device_id":"Chrome-96.0.4664.110",
+            "device_type":"Chrome 96.0.4664.110 on OS X 10.15.7 64-bit",
+            "forced":true,
+            "authorizationString":"Basic NWM1OWU3YzNmMGI2Y2IxYWQwMmJhZjY2OnNrX1FxWEpkbjZOeTVzTVJ1MjdBbWcz"
+        })
+    }
+
+    request(requestOptions, function(err0, res0, body0) {
+        console.log('LOGIN', err0, res0, body0);
+        res.send(body0);
+    });
+}); 
+
+// testing login
+router.get('/securedata', function(req, res) {
+    var loginRequest = {
+        uri: 'https://services.surfline.com/trusted/token?isShortLived=false',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic NWM1OWU3YzNmMGI2Y2IxYWQwMmJhZjY2OnNrX1FxWEpkbjZOeTVzTVJ1MjdBbWcz',
+            'accept-language': 'en',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-dest': 'empty',
+            'origin': 'https://www.surfline.com',
+            'sec-ch-ua-platform': '"macOS"',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+            'accept': 'application/json',
+            'credentials': 'same-origin',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+            'authority': 'services.surfline.com',
+            // 'Cookie': 'connect.sid=s%3A6URcutTPKOMWgfj8hEaUT27bG5TV3B6L.PbimGct0HOOyjvTZUr7HbgG706XIvvskLnhFZNFZENQ'
+        },
+        body: JSON.stringify({
+            "grant_type":"password",
+            "username":"ian1239998@gmail.com",
+            "password":"monkeys12399",
+            "device_id":"Chrome-96.0.4664.110",
+            "device_type":"Chrome 96.0.4664.110 on OS X 10.15.7 64-bit",
+            "forced":true,
+            "authorizationString":"Basic NWM1OWU3YzNmMGI2Y2IxYWQwMmJhZjY2OnNrX1FxWEpkbjZOeTVzTVJ1MjdBbWcz"
+        })
+    }
+
+    request(loginRequest, function(err0, res0, body0) {
+        console.log('LOGIN ATTEMPT');
+
+        if(!err0 && res0.statusCode === 200) {
+            var bearerString = `${JSON.parse(body0).token_type} ${JSON.parse(body0).access_token}`
+            console.log('LOGGED IN', bearerString);
+
+            var dataRequest = {
+                uri: 'https://services.surfline.com/kbyg/regions/forecasts/conditions?subregionId=58581a836630e24c44878fd4&days=6&accessToken=403e69522cbc2832dda6ef6513fc165440b12612',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': bearerString,
+                    'accept-language': 'en',
+                    'sec-fetch-mode': 'cors',
+                    'sec-fetch-site': 'same-site',
+                    'sec-fetch-dest': 'empty',
+                    'origin': 'https://www.surfline.com',
+                    'sec-ch-ua-platform': '"macOS"',
+                    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+                    'accept': 'application/json',
+                    'credentials': 'same-origin',
+                    'sec-ch-ua-mobile': '?0',
+                    'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+                    'authority': 'services.surfline.com',
+                    // 'Cookie': 'connect.sid=s%3A6URcutTPKOMWgfj8hEaUT27bG5TV3B6L.PbimGct0HOOyjvTZUr7HbgG706XIvvskLnhFZNFZENQ'
+                }
+            }
+
+            request(dataRequest, function(err1, res1, body1) {
+                console.log('DATA ATTEMPT');
+
+                if(!err1 && res1.statusCode === 200) {
+                    console.log('SUCCESS');
+                    res.send(body1);
+                } else {
+                    console.log('DATA ERROR');
+                    res.send(err1);
+                }
+            });
+
+        } else {
+            console.log('LOGIN ERROR');
+            res.send(err0);
+        } 
+
+        // res.send(body0);
+    });
+}); 
+
+
 router.get('/surfdata', function(req, res) {
     console.log('GETTING SUF DATA');
     var int_hour = 24;
