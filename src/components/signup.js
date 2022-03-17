@@ -36,7 +36,7 @@ class Signup extends Component {
                 conf_password: this.state.conf_password
             })
         };
-        fetch("http://localhost:3001/testAPI/signup", requestOptions)
+        fetch("https://limitless-shore-42348.herokuapp.com/testAPI/signup", requestOptions)
             .then(res => res.json())
             .then(res => {
                 console.log(res);
