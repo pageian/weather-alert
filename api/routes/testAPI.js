@@ -156,6 +156,16 @@ router.put('/settings', function(req, res) {
     });
 });
 
+router.get('/the-news', async function(req, res) {
+    try {
+        const data = await surfDataFunction('584204204e65fad6a77094cf');
+        console.log("TEsT", data);
+        res.send(data);
+    } catch(e) {
+        console.log("Error", e);
+    }
+});
+
 // get weather data for halifax
 router.get('/weather', function(req, res) {
     request('http://api.openweathermap.org/data/2.5/onecall?lat=44.648618&lon=-63.5859487&exclude=minutely,hourly&units=metric&appid=a28eff83ec6108abef556025bece0213', function (error, response, body) {
@@ -330,110 +340,121 @@ router.get('/securedata', function(req, res) {
 }); 
 
 
-router.get('/surfdata', function(req, res) {
-    var int_hour = 24;
-    var data = {};
-
-    var requestHeaders = {
-        'Content-Type': 'application/json',
-        'accept-language': 'en',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-site',
-        'sec-fetch-dest': 'empty',
-        'origin': 'https://www.surfline.com',
-        'sec-ch-ua-platform': '"macOS"',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
-        'accept': 'application/json',
-        'credentials': 'same-origin',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-        'authority': 'services.surfline.com',
+router.get('/surfdata', async function(req, res) {
+    try {
+        console.log('spot_id', req.query.spot_id);
+        const data = await surfDataFunction(req.query.spot_id);
+        console.log("TEsT123");
+        res.send(data);
+    } catch(e) {
+        console.log("Error", e);
     }
-
-    var forecastRequest = {
-        uri: 'https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour,
-        method: 'GET',
-        headers: requestHeaders
-    }
-
-    var tidesRequest = {
-        uri: 'https://services.surfline.com/kbyg/spots/forecasts/tides?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour,
-        method: 'GET',
-        headers: requestHeaders
-    }
-
-    var windRequest = {
-        uri: 'https://services.surfline.com/kbyg/spots/forecasts/wind?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour,
-        method: 'GET',
-        headers: requestHeaders
-    }
-
-    var weatherRequest = {
-        uri: 'https://services.surfline.com/kbyg/spots/forecasts/weather?spotId=' + req.query.spot_id + '&intervalHours=' + int_hour,
-        method: 'GET',
-        headers: requestHeaders
-    }
-
-    // //test legacy
-    // request('http://api.surfline.com/v1/forecasts/4991?resources=surf&days=1&getAllSpots=false&units=e&interpolate=true&showOptimal=false', function(err, res0, body) {
-    //     console.log('LEGACY OUTPUT', err, res0.statusCode);
-    // });
-
-    // request('https://services.surfline.com/kbyg/regions/forecasts/conditions?subregionId=58581a836630e24c44878fd4&days=6', function(err, res, body) {
-    //     console.log('NEW NEW', err, res.statusCode);
-    // })
-
-    // request('https://services.surfline.com/trusted/token?isShortLived=false', function(err, res, body) {
-    //     console.log('LOGIN', err, res.statusCode);
-    // });
-
-    //surf forecast
-    request(forecastRequest, function (err0, res0, body0) {
-        console.log('GETTING FORECAST');
-        if (!err0 && res0.statusCode === 200) {
-            console.log('GOT FORECAST');
-            // console.log(JSON.parse(body0));
-            // console.log('GOT WAVE DATA');
-            data.waves = JSON.parse(body0).data.wave;
-
-            // tides query
-            request(tidesRequest, function (err1, res1, body1) {
-                console.log('GETTING TIDES');
-                if (!err1 && res1.statusCode == 200) {
-                    // console.log(JSON.parse(body1));
-                    // console.log('GOT TIDE DATA');
-                    console.log('GOT TIDES');
-                    data.tides = JSON.parse(body1).data.tides;
-
-                    // wind query
-                    request(windRequest, function (err2, res2, body2) {
-                        if (!err2 && res2.statusCode == 200) {
-                            // console.log(JSON.parse(body2));
-                            // console.log('GOT WIND DATA');
-                            data.winds = JSON.parse(body2).data.wind;
-
-                            // weather query
-                            request(weatherRequest, function (err3, res3, body3) {
-                                if (!err3 && res3.statusCode == 200) {
-                                    // console.log(JSON.parse(body3));
-                                    // console.log('GOT WEATHER DATA');
-                                    data.weather = JSON.parse(body3).data;
-
-                                    res.send(data);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        } else {
-            console.log('ERROR RETRIEVING', err0, res0);
-        }
-    });
-
-    
-
-    //res.send(respose)
 });
+
+function surfDataFunction(spot_id) {
+    return new Promise(resolve => {
+        var int_hour = 24;
+        var data = {};
+    
+        var requestHeaders = {
+            'Content-Type': 'application/json',
+            'accept-language': 'en',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-dest': 'empty',
+            'origin': 'https://www.surfline.com',
+            'sec-ch-ua-platform': '"macOS"',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+            'accept': 'application/json',
+            'credentials': 'same-origin',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+            'authority': 'services.surfline.com',
+        }
+    
+        var forecastRequest = {
+            uri: 'https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=' + spot_id + '&intervalHours=' + int_hour,
+            method: 'GET',
+            headers: requestHeaders
+        }
+    
+        var tidesRequest = {
+            uri: 'https://services.surfline.com/kbyg/spots/forecasts/tides?spotId=' + spot_id + '&intervalHours=' + int_hour,
+            method: 'GET',
+            headers: requestHeaders
+        }
+    
+        var windRequest = {
+            uri: 'https://services.surfline.com/kbyg/spots/forecasts/wind?spotId=' + spot_id + '&intervalHours=' + int_hour,
+            method: 'GET',
+            headers: requestHeaders
+        }
+    
+        var weatherRequest = {
+            uri: 'https://services.surfline.com/kbyg/spots/forecasts/weather?spotId=' + spot_id + '&intervalHours=' + int_hour,
+            method: 'GET',
+            headers: requestHeaders
+        }
+    
+        // //test legacy
+        // request('http://api.surfline.com/v1/forecasts/4991?resources=surf&days=1&getAllSpots=false&units=e&interpolate=true&showOptimal=false', function(err, res0, body) {
+        //     console.log('LEGACY OUTPUT', err, res0.statusCode);
+        // });
+    
+        // request('https://services.surfline.com/kbyg/regions/forecasts/conditions?subregionId=58581a836630e24c44878fd4&days=6', function(err, res, body) {
+        //     console.log('NEW NEW', err, res.statusCode);
+        // })
+    
+        // request('https://services.surfline.com/trusted/token?isShortLived=false', function(err, res, body) {
+        //     console.log('LOGIN', err, res.statusCode);
+        // });
+    
+        //surf forecast
+        request(forecastRequest, function (err0, res0, body0) {
+            console.log('GETTING FORECAST');
+            if (!err0 && res0.statusCode === 200) {
+                console.log('GOT FORECAST');
+                // console.log(JSON.parse(body0));
+                // console.log('GOT WAVE DATA');
+                data.waves = JSON.parse(body0).data.wave;
+    
+                // tides query
+                request(tidesRequest, function (err1, res1, body1) {
+                    console.log('GETTING TIDES');
+                    if (!err1 && res1.statusCode == 200) {
+                        // console.log(JSON.parse(body1));
+                        // console.log('GOT TIDE DATA');
+                        console.log('GOT TIDES');
+                        data.tides = JSON.parse(body1).data.tides;
+    
+                        // wind query
+                        request(windRequest, function (err2, res2, body2) {
+                            if (!err2 && res2.statusCode == 200) {
+                                // console.log(JSON.parse(body2));
+                                // console.log('GOT WIND DATA');
+                                data.winds = JSON.parse(body2).data.wind;
+    
+                                // weather query
+                                request(weatherRequest, function (err3, res3, body3) {
+                                    if (!err3 && res3.statusCode == 200) {
+                                        // console.log(JSON.parse(body3));
+                                        // console.log('GOT WEATHER DATA');
+                                        data.weather = JSON.parse(body3).data;
+                                        console.log('GOT ALL');
+    
+                                        // res.send(data);
+                                        resolve(data);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                console.log('ERROR RETRIEVING', err0, res0);
+            }
+        });
+    });
+}
 
 module.exports = router;
