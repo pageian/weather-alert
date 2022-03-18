@@ -158,13 +158,63 @@ router.put('/settings', function(req, res) {
 
 router.get('/the-news', async function(req, res) {
     try {
+        const fullString = 'Hello brethren, the best wave score at L-town is {X}, with a height of {X} at {X} seconds'
+        const introStr = 'Hello brethren, the best wave score at L-town is ';
+        const secondStr = ' points, with a height of ';
+        const atStr = ' feet at ';
+        const second = ' seconds';
+
+        var bestWave;
+
+        var maxScore;
+        var bestWaveHeight;
+        var bestPeriod;
+
+
         const data = await surfDataFunction('584204204e65fad6a77094cf');
-        console.log("TEsT", data);
-        res.send(data);
+    
+
+        bestWave = getBestWave(data.waves);
+        // console.log('BEST WAVE', bestWave);
+
+        maxScore = bestWave.surf.optimalScore;
+        bestWaveHeight = metersToFeet(bestWave.swells[0].height);
+        bestPeriod = bestWave.swells[0].period;
+
+        const buildStr = introStr
+            + maxScore
+            + secondStr
+            + bestWaveHeight
+            + atStr
+            + bestPeriod
+            + second;
+
+        res.send(buildStr);
     } catch(e) {
         console.log("Error", e);
     }
 });
+
+function metersToFeet(meters) {
+    return Math.round((3.281 * meters) * 10) / 10;
+}
+
+function getBestWave(waves) {
+    var bestWave = null;
+    // console.log('WAVES', waves[index]);
+    for (var index = 0; index < waves.length - 1; index++) {
+        if (bestWave == null) {
+            bestWave = waves[index];
+        } else {
+            // console.log('TESTASD', waves[index], bestWave.surf)
+            if (waves[index].surf.optimalScore > bestWave.surf.optimalScore) {
+                bestWave = waves[index];
+            }
+        }
+    }
+
+    return bestWave
+}
 
 // get weather data for halifax
 router.get('/weather', function(req, res) {
